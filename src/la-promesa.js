@@ -17,9 +17,9 @@ function promise() {
 	
 	var bufferBeanFunct = [];
 	
-	var beanFunc;
-	
 	var data;
+	
+	var error;
 	
 	var self;
 	
@@ -29,16 +29,39 @@ function promise() {
 		
 	}
 	
-	var triggerResolveFunc = function( aData, aResolveFunc, abufferBeanFunct ) {
+	var triggerFunc = function( type, aDataError, abufferBeanFunct ) {
 		
-		if ( ! aData
-				|| ! aResolveFunc ) {
+		if ( ! aDataError ) {
 		
 			return null;
 					
-		}		
+		}	
 		
-		var newPromise = aResolveFunc( aData );
+		var ii = 0;		
+		
+		var functTrigger = null;
+		
+		for ( i = 0; i < abufferBeanFunct.length ; i++ ) {
+			
+			if ( abufferBeanFunct[i][ type ] )	{
+				
+				ii = i
+				
+				functTrigger = abufferBeanFunct[i][ type ];
+				
+				break;
+				
+			}
+			
+		}
+		
+		if ( ! functTrigger  ) {
+		
+			return null;
+			
+		}
+		
+		var newPromise = functTrigger( aDataError );
 		
 		if ( ! newPromise
 		      || ! newPromise.then ) {
@@ -47,7 +70,7 @@ function promise() {
 			
 		}
 		
-		for ( i = 0; i < abufferBeanFunct.length ; i++ ) {
+		for ( i = ii + 1; i < abufferBeanFunct.length ; i++ ) {
 			
 			newPromise.then( abufferBeanFunct[i].resolve,  abufferBeanFunct[i].reject );		
 			
@@ -55,24 +78,24 @@ function promise() {
 		
 		return newPromise;
 		
-	}
+	}	
 	
 	var then = function( aresolveFunc, arejectFunc ) {	
 		
 		var nextPromise = null;
 		
-		if ( ! beanFunc )		{
-			
-			beanFunc = createBeanFunction( aresolveFunc, arejectFunc );
-			
-			nextPromise = triggerResolveFunc( data, beanFunc.resolve, bufferBeanFunct );
-			
-		} else if ( ! nextPromise ) {
-			
-			bufferBeanFunct.push( createBeanFunction( aresolveFunc, arejectFunc ) );
-			
-		}	
+		bufferBeanFunct.push( createBeanFunction( aresolveFunc, arejectFunc ) );
 		
+		if ( data ) {
+			
+			nextPromise = triggerResolve( data, bufferBeanFunct );
+						
+		} else if ( error ) {
+			
+			nextPromise = triggerFunc( "reject", error, bufferBeanFunct );
+			
+		}
+			
 		if ( ! nextPromise ) {
 			
 			return self;
@@ -85,20 +108,61 @@ function promise() {
 		}
 		
 	}	
+	
+	var catchFunction = function( arejectFunc ) {
+		
+		return then( null, arejectFunc );
+		
+	}
+	
+	var triggerResolve = function( aData,  aBufferBeanFunct ){
+		
+		try {
+			
+			nextPromise = triggerFunc( "resolve", aData, aBufferBeanFunct );
+				
+		} catch(err) {
+			
+			nextPromise = triggerFunc( "reject", err, aBufferBeanFunct );			
+		}		
+		
+		return nextPromise;
+		
+	}
 
 	var resolve = function( adata ) {
 		
+		if ( error ) {
+			
+			throw( "The state is already rejected" );
+			
+		}
+		
 		data = adata;
 		
-		var resolveFunc =  beanFunc ? beanFunc.resolve : null;
+		triggerFunc( "resolve", data,  bufferBeanFunct );
 		
-		triggerResolveFunc( data, resolveFunc, bufferBeanFunct );
+	}
+	
+	var reject = function( aerror ) {
 		
-	} 	
+		if ( data ) {
+			
+			throw( "The state is already resolved" );
+			
+		}
+		
+		error = aerror;
+		
+		triggerFunc( "reject", error,  bufferBeanFunct );
+		
+	}
 	
 	self = {
-		"then"     : then,
-		"resolve"  : resolve
+		"then"    : then,
+		"catch"   : catchFunction,
+		"resolve" : resolve,
+		"rejec"   : reject
 	}
 	
 	return self;
