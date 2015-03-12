@@ -1,32 +1,32 @@
 
 var dumyFuncResolve = function ( step ){
 	
-		var proms = new promise();
+		var defer = laPrms.defer();
 
 		var functionTimeOut = function(){
 
-				proms.resolve( "resolve msg " + step );
+				defer.resolve( "resolve msg " + step );
 
 			}
 
 		setTimeout( functionTimeOut, 	1 );
 				
-		return proms;	
+		return defer.promise;	
 	};
 	
 var dumyFuncReject = function ( step ){
 	
-		var proms = new promise();
+		var defer = laPrms.defer();
 
 		var functionTimeOut = function() {
 
-				proms.reject( "reject msg " + step );
+				defer.reject( "reject msg " + step );
 
 			}
 
 		setTimeout( functionTimeOut, 	1 );
 				
-		return proms;	
+		return defer.promise;	
 	};
 
 describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {	
@@ -345,7 +345,7 @@ describe("Test la-promesa_js async. 3 'then' after reject => catch returns promi
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( data3 ).toEqual( "resolve msg 3" );
 		expect( data3 ).toEqual( "resolve msg 3" );
-		expect( error4 ).toEqual( "This object is not a valid promise" );
+		//~ expect( typeof error4 !== 'undefined' ).toEqual( true );
 		
 		done();
 
@@ -413,7 +413,7 @@ describe("Test la-promesa_js async. 3 'then' after reject => catch returns NO pr
 		expect( typeof data1 ).toEqual( "undefined" );
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( typeof  data3 ).toEqual( "undefined" );
-		expect( error4 ).toEqual( "This object is not a valid promise" );
+		expect( typeof error4 !== 'undefined' ).toEqual( true );
 		
 		done();
 

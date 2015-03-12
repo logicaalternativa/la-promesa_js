@@ -1,90 +1,87 @@
 
-var dumyfunctionAsync = function ( step ){
+var dumyFuncResolveAsync = function ( step ){
 	
-		var proms = new promise();
+		var defer = laPrms.defer();
 
 		var functionTimeOut = function(){
 
-				proms.resolve( "resolve msg " + step );
+				defer.resolve( "resolve msg " + step );
 
 			}
 
 		setTimeout( functionTimeOut, 	1 );
 				
-		return proms;	
+		return defer.promise;	
 	};
 	
+var dumyFuncRejectAsync = function ( step ){
 	
-var dumyfunctionSync = function ( step ){	
+		var defer = laPrms.defer();
 
-		var prom = new promise( "dumyfunction " +  step );
+		var functionTimeOut = function() {
 
-		prom.resolve( "resolve msg " + step );
+				defer.reject( "reject msg " + step );
+
+			}
+
+		setTimeout( functionTimeOut, 	1 );
 				
-		return prom;	
+		return defer.promise;	
+	};
+	
+var dumyFuncResolveSync = function ( step ){
+	
+		var defer = laPrms.defer();
+
+		defer.resolve( "resolve msg " + step );
+
+		return defer.promise;	
+	};
+	
+var dumyFuncRejectSync = function ( step ){
+	
+		var defer = laPrms.defer();
+		
+		defer.reject( "reject msg " + step );
+
+		return defer.promise;	
 	};
 
-
-describe("Test la-promesa_js mix sync async", function( ) {	
+/*
+describe("Test la-promesa_js mix. 2 'then' function => resolve I", function( ) {	
 	
 	var data1, data2;
-	var date1, date2;
-
+	
    beforeEach( function( done ) {
 	 
-		var prom1 = dumyfunctionSync(1)
-			.then( 
-				function ( data ) { 
-					
-					// Traza 
-					
-					console.log( "Ejecutada la función then se devuelve async 2" )
-					
-					// FIn de traza			
+		var prom1 = dumyFuncResolveAsync(1)
+			.then( function ( data ) { 			
 
 					data1 = data;
-					date1 = ( new Date() ).getTime();
 								
-					return new  dumyfunctionAsync( 2 ) 
+					return new  dumyFuncResolveSync( 2 ) 
 
 				} 
-			)
-			.then(
-				
-				function( data ){
-					
-					// Traza 
-					
-					console.log( "Ejecutada la función then se devuelve sync 3" )
-					
-					// FIn de traza
-				
-					return dumyfunctionSync( 3 )
-					
-				}
-			
-			)
-			.then( 
+			);
+		
+		prom1.then( 
 			
 				function( data ) {
 
 					data2 = data;					
-					date2 = ( new Date() ).getTime();	
-					done();
-
 				}
 
-			)
-			; 
+			); 
+			
+		setTimeout ( function () { done(); }, 100);
+			
 	});
 	
 	
-	it( "Test 2 functions 'then' ", function( done ) {		
+	it( "Test", function( done ) {		
 		
 		expect( data1 ).toEqual( "resolve msg 1" );
-		expect( data2 ).toEqual( "resolve msg 3" );
-		
-		expect( date2 - date1 > 0 ).toEqual( true );
+		expect( data2 ).toEqual( "resolve msg 2" );
 		
 		done();
 
@@ -92,3 +89,488 @@ describe("Test la-promesa_js mix sync async", function( ) {
 	
 	
 });
+
+describe("Test la-promesa_js mix. 2 'then' function => resolve II", function( ) {	
+	
+	var data1, data2;
+	
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolveSync(1)
+			.then( function ( data ) { 			
+
+					data1 = data;
+								
+					return new  dumyFuncResolveAsync( 2 ) 
+
+				} 
+			);
+		
+		prom1.then( 
+			
+				function( data ) {
+
+					data2 = data;					
+				
+					//~ done();
+
+				}
+
+			); 
+			
+		setTimeout ( function () { done(); }, 100);
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( data1 ).toEqual( "resolve msg 1" );
+		expect( data2 ).toEqual( "resolve msg 2" );
+		
+		done();
+
+	});
+	
+	
+});
+
+describe("Test la-promesa_js mix. 2 'then' and catch function => reject last then I", function( ) {	
+	
+	var data1, data2, error3;
+	
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolveAsync(1)
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new  dumyFuncResolveSync( 2 ) 
+
+					} 
+			).then(  
+					function ( data ) { 			
+
+						data2 = data;
+									
+						return new  dumyFuncRejectAsync( 3 ) 
+
+					} 
+			).catch ( 
+				function( error ) {
+
+					error3 = error;					
+
+				}
+			); 
+			
+			setTimeout ( function () { done(); }, 100);
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( data1 ).toEqual( "resolve msg 1" );
+		expect( data2 ).toEqual( "resolve msg 2" );
+		expect( error3 ).toEqual( "reject msg 3" );
+		
+		done();
+
+	});
+	
+	
+});
+*/
+
+describe("Test la-promesa_js mix. 2 'then' and catch function => reject last then II", function( ) {	
+	
+	var data1, data2, error3;
+	
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolveSync(1)
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new  dumyFuncResolveAsync( 2 ) 
+
+					} 
+			).then(  
+					function ( data ) { 			
+
+						data2 = data;
+									
+						return new dumyFuncRejectSync( 3 ) 
+
+					} 
+			).catch ( 
+				function( error ) {
+
+					error3 = error;
+
+				}
+			); 
+			
+			setTimeout ( function () { done(); }, 100);
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( data1 ).toEqual( "resolve msg 1" );
+		expect( data2 ).toEqual( "resolve msg 2" );
+		expect( error3 ).toEqual( "reject msg 3" );
+		
+		done();
+
+	});
+	
+	
+});
+
+/*
+describe("Test la-promesa_js mix. 2 'then' and catch function => reject first then", function( ) {	
+	
+	var data1, data2, error3;
+	
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolveAsync(1)
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new  dumyFuncRejectAsync( 2 ) 
+
+					} 
+			).then(  
+					function ( data ) { 			
+
+						data2 = data;
+									
+						return new  dumyFuncResolveAsync( 3 ) 
+
+					} 
+			).catch ( 
+				function( error ) {
+
+					error3 = error;					
+
+				}
+			); 
+			
+			setTimeout ( function () { done(); }, 100);
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( data1 ).toEqual( "resolve msg 1" );
+		expect( typeof data2 ).toEqual( "undefined" );
+		expect( error3 ).toEqual( "reject msg 2" );
+		
+		done();
+
+	});
+	
+	
+});
+
+describe("Test la-promesa_js mix. 2 'then' and catch function => reject pricipal function", function( ) {	
+	
+	var data1, data2, error3;
+
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncRejectAsync( 1 )
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new  dumyFuncResolveAsync( 2 ) 
+
+					} 
+			).then(  
+					function ( data ) { 			
+
+						data2 = data;
+									
+						return new  dumyFuncResolveAsync( 3 ) 
+
+					} 
+			).catch ( 
+				function( error ) {
+
+					error3 = error;					
+
+				}
+			); 
+			
+			setTimeout ( function () { done(); }, 100);
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( typeof data1 ).toEqual( "undefined" );
+		expect( typeof data2 ).toEqual( "undefined" );
+		expect( error3 ).toEqual( "reject msg 1" );
+		
+		done();
+
+	});
+	
+	
+});
+
+describe("Test la-promesa_js mix. 3 'then' and catch function between", function( ) {	
+	
+	var data1, data3;
+	var error2;
+	
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolveAsync( 1 )
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new  dumyFuncResolveAsync( 2 ) 
+
+					} 
+			).catch(  
+					function ( data ) { 			
+
+						error2 = error; 
+
+					} 
+			).then ( 
+				function( data ) {
+					
+					data3 = data;								
+					
+				}
+			); 
+			
+			setTimeout ( function () { done(); }, 100);
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( data1 ).toEqual( "resolve msg 1" );
+		expect( typeof error2 ).toEqual( "undefined" );
+		expect( data3 ).toEqual( "resolve msg 2" );
+		
+		done();
+
+	});
+	
+	
+});
+
+describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise", function( ) {	
+	
+	var data1, data3;
+	var error2, error4;
+
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncRejectAsync( 1 )
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new  dumyFuncResolveAsync( 2 ) 
+
+					} 
+			).catch(  
+					function ( error ) { 			
+
+						error2 = error; 
+						
+						return new  dumyFuncResolveAsync( 3 ) 
+
+					} 
+			).then (  
+				function( data ) { // <= // <= It has to exit here. It don't return a valid promise and stops chain.
+					
+					data3 = data; 
+
+				}
+			); 
+			
+			setTimeout ( function () { 
+				
+								try {
+									
+									 prom1 = prom1.then( function () {  new dumyFuncResolveAsync( 3 ) }  );
+									 
+								} catch( err ) {
+								
+									error4 = err;
+									
+								}
+								done(); 
+								
+							}, 100 );
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( typeof data1 ).toEqual( "undefined" );
+		expect( error2 ).toEqual( "reject msg 1" );
+		expect( data3 ).toEqual( "resolve msg 3" );
+		expect( data3 ).toEqual( "resolve msg 3" );
+		expect( typeof error4 !== 'undefined' ).toEqual( true );
+		
+		done();
+
+	});
+	
+	
+});
+
+describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO promise", function( ) {	
+	
+	var data1, data3;
+	var error2, error4;
+
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncRejectAsync( 1 )
+			.
+			then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new dumyFuncResolveAsync( 2 );
+
+					} 
+			)
+			.catch(  
+					function ( error ) { // <= It has to exit here. It don't return a valid promise and stops chain.
+
+						error2 = error; 										
+
+					} 
+			)
+			.then ( 
+				function( data ) {
+					
+					data3 = data
+					
+					return  new dumyFuncResolveAsync( 3 );
+
+				}
+			)
+			; 
+			
+			setTimeout ( function () { 
+				
+								try {
+									
+									 prom1 = prom1.then( function () {  new dumyFuncResolveAsync( 3 ) }  );
+									 
+								} catch( err ) {
+								
+									error4 = err;
+									
+								}
+								done(); 
+								
+							}, 100 );
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( typeof data1 ).toEqual( "undefined" );
+		expect( error2 ).toEqual( "reject msg 1" );
+		expect( typeof  data3 ).toEqual( "undefined" );
+		expect( typeof error4 !== 'undefined' ).toEqual( true );
+		
+		done();
+
+	});
+	
+	
+});
+
+describe("Test la-promesa_js mix. 2'then' and 2 'catch' one after the other => It fails second 'then' and error is caught in second 'catch'", function( ) {	
+	
+	var data1, data3;
+	var error2, error5;
+
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolveAsync( 1 )
+			.
+			then(   
+					function ( data ) { 			
+
+						data1 = data;
+									
+						return new dumyFuncResolveAsync( 2 );
+
+					} 
+			)
+			.catch(  
+					function ( error ) {
+
+						error2 = error; 										
+
+					} 
+			)
+			.then ( 
+				function( data ) {
+					
+					data3 = data
+					
+					return  new dumyFuncRejectAsync( 4 );
+
+				}
+			).catch(  
+					function ( error ) {
+
+						error5 = error; 										
+
+					} 
+			)
+			; 
+			
+			setTimeout ( function () { done(); }, 100);
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( data1 ).toEqual( "resolve msg 1" );
+		expect( typeof error2 ).toEqual( "undefined" );
+		expect( data3 ).toEqual( "resolve msg 2" );
+		expect( error5 ).toEqual( "reject msg 4" );
+		
+		done();
+
+	});
+	
+	
+});
+
+*/
