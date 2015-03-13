@@ -1,35 +1,37 @@
 
-var dumyFuncResolve = function ( step ){
+var dumyFuncResolve = function ( step ) {
 	
-		var defer = laPrms.defer();
+		var prmsFunc = function ( resolve, reject ) {
+			
+				var functionTimeOut = function(){
 
-		var functionTimeOut = function(){
+						resolve( "resolve msg " + step );
 
-				defer.resolve( "resolve msg " + step );
+					}
 
-			}
-
-		setTimeout( functionTimeOut, 	10 );
+				setTimeout( functionTimeOut, 	10 );
+		}		
 				
-		return defer.promise;	
+		return laPrms.createPromise( prmsFunc );	
 	};
 	
 var dumyFuncReject = function ( step ){
 	
-		var defer = laPrms.defer();
+		var prmsFunc = function ( resolve, reject ) {
+			
+				var functionTimeOut = function(){
 
-		var functionTimeOut = function() {
+						reject( "reject msg " + step );
 
-				defer.reject( "reject msg " + step );
+					}
 
-			}
-
-		setTimeout( functionTimeOut, 	10 );
+				setTimeout( functionTimeOut, 	10 );
+		}		
 				
-		return defer.promise;	
+		return laPrms.createPromise( prmsFunc );	
 	};
 
-describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {	
+describe("Test la-promesa_js async-prms. 2 'then' function => resolve", function( ) {	
 	
 	var data1, data2;
 	var date1, date2;
@@ -79,18 +81,22 @@ describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {
 	
 });
 
-describe("Test la-promesa_js async. 2 'then' and catch function => reject last then", function( ) {	
+describe("Test la-promesa_js async-prms. 2 'then' and catch function => reject last then", function( ) {	
 	
 	var data1, data2, error3;
 	var date1, date2;
 
    beforeEach( function( done ) {
 	 
-		var prom1 = dumyFuncResolve(1)
+		var prom1 = dumyFuncResolve( 1 )
 			.then(   
 					function ( data ) { 			
 
 						data1 = data;
+						
+						// Traza
+						console.log( "data1 - " + data1 );
+						// Fin de traza
 						date1 = ( new Date() ).getTime();
 									
 						return new  dumyFuncResolve( 2 ) 
@@ -101,6 +107,10 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject last t
 
 						data2 = data;
 									
+						// Traza
+						console.log( "data2 - " + data2 );
+						// Fin de traza
+						
 						return new  dumyFuncReject( 3 ) 
 
 					} 
@@ -133,7 +143,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject last t
 	
 });
 
-describe("Test la-promesa_js async. 2 'then' and catch function => reject first then", function( ) {	
+describe("Test la-promesa_js async-prms. 2 'then' and catch function => reject first then", function( ) {	
 	
 	var data1, data2, error3;
 	var date1, date2;
@@ -187,7 +197,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject first 
 	
 });
 
-describe("Test la-promesa_js async. 2 'then' and catch function => reject pricipal function", function( ) {	
+describe("Test la-promesa_js async-prms. 2 'then' and catch function => reject pricipal function", function( ) {	
 	
 	var data1, data2, error3;
 
@@ -237,7 +247,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject pricip
 	
 });
 
-describe("Test la-promesa_js async. 3 'then' and catch function between", function( ) {	
+describe("Test la-promesa_js async-prms. 3 'then' and catch function between", function( ) {	
 	
 	var data1, data3;
 	var error2;
@@ -289,7 +299,7 @@ describe("Test la-promesa_js async. 3 'then' and catch function between", functi
 	
 });
 
-describe("Test la-promesa_js async. 3 'then' after reject => catch returns promise", function( ) {	
+describe("Test la-promesa_js async-prms. 3 'then' after reject => catch returns promise", function( ) {	
 	
 	var data1, data3;
 	var error2, error4;
@@ -354,7 +364,7 @@ describe("Test la-promesa_js async. 3 'then' after reject => catch returns promi
 	
 });
 
-describe("Test la-promesa_js async. 3 'then' after reject => catch returns NO promise", function( ) {	
+describe("Test la-promesa_js async-prms. 3 'then' after reject => catch returns NO promise", function( ) {	
 	
 	var data1, data3;
 	var error2, error4;
@@ -422,7 +432,7 @@ describe("Test la-promesa_js async. 3 'then' after reject => catch returns NO pr
 	
 });
 
-describe("Test la-promesa_js async. 2'then' and 2 'catch' one after the other => It fails second 'then' and error is caught in second 'catch'", function( ) {	
+describe("Test la-promesa_js async-prms. 2'then' and 2 'catch' one after the other => It fails second 'then' and error is caught in second 'catch'", function( ) {	
 	
 	var data1, data3;
 	var error2, error5;
@@ -483,8 +493,7 @@ describe("Test la-promesa_js async. 2'then' and 2 'catch' one after the other =>
 	
 });
 
-
-describe("Test la-promesa_js async. 2'then' and 1 'catch' The 'throw error' in 'then' function  is been catching by 'catch' function", function( ) {	
+describe("Test la-promesa_js async-prms. 2'then' and 1 'catch' The 'throw error' in 'then' function  is been catching by 'catch' function", function( ) {	
 	
 	var data1, data2;
 	var error3;

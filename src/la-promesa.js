@@ -15,47 +15,42 @@
 
 
 var laPrms = (
-	
+
 	function() {	
 		
-		function deferObject() {	
-	
-			var bufferBeanFunct = [];
-			
-			var data;
-			
-			var error;
-			
-			var returnPromise;
-			
-			var nextPromise;
-			
-			var validateState = function (){
-				
-				if ( data ) {
-					
-					throw "The state is already resolved";
-					
-				} else if ( error ) {
-					
-					throw "The state is already rejected";
-				}
-				
-			}
-			
-			var isValidPromise = function( futurPromise ) {
+		var isValidPromise = function( futurPromise ) {
 				
 				return  futurPromise && futurPromise.then;
 				
+		}
+		
+		var emptyPromise = function() {
+									
+									return {};
+			
+								 }
+		
+		var triggerNextPromise = function ( prms, aresolveFunc, arejectFunc ) {
+				
+			if ( ! isValidPromise( prms ) ) {
+				
+				throw "This object is not valid promise";
+				
+			} 			
+			
+			var futurPromise =  prms.then( aresolveFunc, arejectFunc );
+				
+			if ( ! isValidPromise( futurPromise ) ) {
+				
+				futurPromise = emptyPromise() ;
+				
 			}
 			
-			var triggerFunc = function( type, aDataError, abufferBeanFunct ) {
-				
-				if ( ! aDataError ) {
-				
-					return null;
-							
-				}	
+			return futurPromise;
+			
+		}
+		
+		var triggerFunc = function( type, aDataError, abufferBeanFunct ) {
 				
 				var ii = 0;		
 				
@@ -85,17 +80,17 @@ var laPrms = (
 				
 				if ( ! isValidPromise( futurPromise ) ) {
 							
-					return {};
+					return emptyPromise() ;
 					
 				}
 				
 				for ( i = ii + 1; i < abufferBeanFunct.length ; i++ ) {
 					
-					futurPromise = futurPromise.then( abufferBeanFunct[i].resolve,  abufferBeanFunct[i].reject );		
+					futurPromise = triggerNextPromise ( futurPromise, abufferBeanFunct[i].resolve,  abufferBeanFunct[i].reject );		
 					
 					if ( ! isValidPromise( futurPromise ) ) {
 							
-						return {};
+						return futurPromise;
 						
 					}
 					
@@ -105,26 +100,42 @@ var laPrms = (
 				
 			}
 			
-			var triggerResolve = function( aData,  aBufferBeanFunct ){
-				
-				try {
-					
-					nextPromise = triggerFunc( "resolve", aData, aBufferBeanFunct );
-						
-				} catch( err ) {
-					
-					nextPromise = triggerFunc( "reject", err, aBufferBeanFunct );			
-				}		
-				
-				return nextPromise;
-				
-			}
+		var addBeanFunction = function ( aresolveFunc, arejectFunc, aBufferBeanFunct ) {
 			
-			var addBeanFunction = function ( aresolveFunc, arejectFunc, aBufferBeanFunct ) {
+			var bean =  {"resolve" : aresolveFunc, "reject": arejectFunc } ;
+			
+			aBufferBeanFunct.push( bean );
+			
+		}
+		
+		var createBeanResult = function() {
 				
-				var bean =  {"resolve" : aresolveFunc, "reject": arejectFunc } ;
+				return { "flag": false, "msg": null };
 				
-				aBufferBeanFunct.push( bean );
+		}
+		
+		function deferObject() {	
+	
+			var bufferBeanFunct = [];
+			
+			var beanResolve = createBeanResult();
+			
+			var beanReject = createBeanResult();
+			
+			var returnPromise;
+			
+			var nextPromise;
+			
+			var validateState = function (){
+				
+				if ( beanResolve.flag ) {
+					
+					throw "The promise is already resolved";
+					
+				} else if ( beanReject.flag ) {
+					
+					throw "The promise is already rejected";
+				}
 				
 			}
 			
@@ -132,29 +143,19 @@ var laPrms = (
 				
 				if ( nextPromise ) {
 					
-					if ( isValidPromise( nextPromise ) ) {
-					
-						var futurPromise =  nextPromise.then( aresolveFunc, arejectFunc );
-						
-						nextPromise = isValidPromise( futurPromise )
-												? futurPromise
-													: {};					
-					}  else {
-						
-						throw "This object is not valid promise";
-					}
+					nextPromise = triggerNextPromise( nextPromise, aresolveFunc, arejectFunc );
 					
 				} else {
 				
 					addBeanFunction( aresolveFunc, arejectFunc, bufferBeanFunct );
 					
-					if ( typeof data !== "undefined" ) {
+					if ( beanResolve.flag ) {
 						
-						nextPromise = triggerResolve( data, bufferBeanFunct );
-									
-					} else if ( typeof error !== "undefined"  ) {
+						_resolve();
 						
-						nextPromise = triggerFunc( "reject", error, bufferBeanFunct );
+					} else if ( beanReject.flag  ) {
+						
+						_reject();
 						
 					}
 					
@@ -179,14 +180,38 @@ var laPrms = (
 				return then( null, arejectFunc );
 				
 			}
+			
+			var _resolve = function() {
+				
+				try{
+							
+					nextPromise = triggerFunc( "resolve", beanResolve.msg, bufferBeanFunct );
+				
+				} catch( err ) {
+					
+					beanResolve.flag = false;					
+					
+					reject( err );
+					
+				}
+				
+			}
+			
+			var _reject = function() {
+				
+				nextPromise = triggerFunc( "reject", beanReject.msg,  bufferBeanFunct );
+				
+			}
 
 			var resolve = function( adata ) {
 				
 				validateState();
 				
-				data = adata;
+				beanResolve.flag = true;
 				
-				nextPromise = triggerResolve( data, bufferBeanFunct );
+				beanResolve.msg = adata;
+				
+				_resolve();				
 				
 			}
 			
@@ -194,9 +219,11 @@ var laPrms = (
 				
 				validateState();
 				
-				error = aerror;
+				beanReject.flag = true;
 				
-				nextPromise = triggerFunc( "reject", error,  bufferBeanFunct );
+				beanReject.msg = aerror;
+				
+				_reject();
 				
 			}
 			
@@ -219,9 +246,20 @@ var laPrms = (
 			
 		}
 		
+		var createPromise = function ( afuncPrms ) {
+			
+			var deferedObject = defer();
+			
+			afuncPrms( deferedObject.resolve, deferedObject.reject );
+			
+			return deferedObject.promise;			
+			
+		}
+		
 		return {
 		
-			"defer" : defer
+			"defer"         : defer,
+			"createPromise" : createPromise
 			
 		}
 		

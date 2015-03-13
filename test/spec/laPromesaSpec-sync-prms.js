@@ -3,45 +3,56 @@ var dumyFuncResolve = function ( step ){
 	
 		var defer = laPrms.defer();
 
-		var functionTimeOut = function(){
+		defer.resolve( "resolve msg " + step );
 
-				defer.resolve( "resolve msg " + step );
-
-			}
-
-		setTimeout( functionTimeOut, 	10 );
-				
 		return defer.promise;	
 	};
 	
 var dumyFuncReject = function ( step ){
 	
 		var defer = laPrms.defer();
+		
+		defer.reject( "reject msg " + step );
 
-		var functionTimeOut = function() {
-
-				defer.reject( "reject msg " + step );
-
-			}
-
-		setTimeout( functionTimeOut, 	10 );
-				
 		return defer.promise;	
 	};
+
+var dumyFuncResolve = function ( step ) {
+	
+		var prmsFunc = function ( resolve, reject ) {
+			
+			resolve( "resolve msg " + step );
+				
+		}		
+				
+		return laPrms.createPromise( prmsFunc );	
+		
+	};
+	
+var dumyFuncReject = function ( step ){
+	
+		var prmsFunc = function ( resolve, reject ) {
+			
+			reject( "reject msg " + step );
+			
+		}		
+				
+		return laPrms.createPromise( prmsFunc );	
+	};
+
+
 
 describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {	
 	
 	var data1, data2;
-	var date1, date2;
-
-   beforeEach( function( done ) {
+	
+	beforeEach( function( done ) {
 	 
 		var prom1 = dumyFuncResolve(1)
 			.then( function ( data ) { 			
 
 					data1 = data;
-					date1 = ( new Date() ).getTime();
-								
+					
 					return new  dumyFuncResolve( 2 ) 
 
 				} 
@@ -52,9 +63,6 @@ describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {
 				function( data ) {
 
 					data2 = data;					
-					date2 = ( new Date() ).getTime();
-					
-					//~ done();
 
 				}
 
@@ -70,8 +78,6 @@ describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {
 		expect( data1 ).toEqual( "resolve msg 1" );
 		expect( data2 ).toEqual( "resolve msg 2" );
 		
-		expect( date2 - date1 > 0 ).toEqual( true );
-		
 		done();
 
 	});
@@ -82,8 +88,7 @@ describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {
 describe("Test la-promesa_js async. 2 'then' and catch function => reject last then", function( ) {	
 	
 	var data1, data2, error3;
-	var date1, date2;
-
+	
    beforeEach( function( done ) {
 	 
 		var prom1 = dumyFuncResolve(1)
@@ -91,8 +96,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject last t
 					function ( data ) { 			
 
 						data1 = data;
-						date1 = ( new Date() ).getTime();
-									
+						
 						return new  dumyFuncResolve( 2 ) 
 
 					} 
@@ -108,8 +112,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject last t
 				function( error ) {
 
 					error3 = error;					
-					date2 = ( new Date() ).getTime();
-
+					
 				}
 			); 
 			
@@ -124,8 +127,6 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject last t
 		expect( data2 ).toEqual( "resolve msg 2" );
 		expect( error3 ).toEqual( "reject msg 3" );
 		
-		expect( date2 - date1 > 0 ).toEqual( true );
-		
 		done();
 
 	});
@@ -136,7 +137,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject last t
 describe("Test la-promesa_js async. 2 'then' and catch function => reject first then", function( ) {	
 	
 	var data1, data2, error3;
-	var date1, date2;
+	
 
    beforeEach( function( done ) {
 	 
@@ -145,7 +146,6 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject first 
 					function ( data ) { 			
 
 						data1 = data;
-						date1 = ( new Date() ).getTime();
 									
 						return new  dumyFuncReject( 2 ) 
 
@@ -161,8 +161,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject first 
 			).catch ( 
 				function( error ) {
 
-					error3 = error;					
-					date2 = ( new Date() ).getTime();
+					error3 = error;
 
 				}
 			); 
@@ -177,8 +176,6 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject first 
 		expect( data1 ).toEqual( "resolve msg 1" );
 		expect( typeof data2 ).toEqual( "undefined" );
 		expect( error3 ).toEqual( "reject msg 2" );
-		
-		expect( date2 - date1 > 0 ).toEqual( true );
 		
 		done();
 
@@ -198,7 +195,6 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject pricip
 					function ( data ) { 			
 
 						data1 = data;
-						date1 = ( new Date() ).getTime();
 									
 						return new  dumyFuncResolve( 2 ) 
 
@@ -215,8 +211,7 @@ describe("Test la-promesa_js async. 2 'then' and catch function => reject pricip
 				function( error ) {
 
 					error3 = error;					
-					date2 = ( new Date() ).getTime();
-
+					
 				}
 			); 
 			
@@ -241,8 +236,7 @@ describe("Test la-promesa_js async. 3 'then' and catch function between", functi
 	
 	var data1, data3;
 	var error2;
-	var date1, date2;
-
+	
    beforeEach( function( done ) {
 	 
 		var prom1 = dumyFuncResolve( 1 )
@@ -250,7 +244,6 @@ describe("Test la-promesa_js async. 3 'then' and catch function between", functi
 					function ( data ) { 			
 
 						data1 = data;
-						date1 = ( new Date() ).getTime();
 									
 						return new  dumyFuncResolve( 2 ) 
 
@@ -265,7 +258,6 @@ describe("Test la-promesa_js async. 3 'then' and catch function between", functi
 				function( data ) {
 					
 					data3 = data;								
-					date2 = ( new Date() ).getTime();
 					
 				}
 			); 
@@ -279,8 +271,6 @@ describe("Test la-promesa_js async. 3 'then' and catch function between", functi
 		expect( data1 ).toEqual( "resolve msg 1" );
 		expect( typeof error2 ).toEqual( "undefined" );
 		expect( data3 ).toEqual( "resolve msg 2" );
-		
-		expect( date2 - date1 > 0 ).toEqual( true );
 		
 		done();
 
@@ -345,7 +335,7 @@ describe("Test la-promesa_js async. 3 'then' after reject => catch returns promi
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( data3 ).toEqual( "resolve msg 3" );
 		expect( data3 ).toEqual( "resolve msg 3" );
-		//~ expect( typeof error4 !== 'undefined' ).toEqual( true );
+		expect( typeof error4 !== 'undefined' ).toEqual( true );
 		
 		done();
 
@@ -378,17 +368,7 @@ describe("Test la-promesa_js async. 3 'then' after reject => catch returns NO pr
 						error2 = error; 										
 
 					} 
-			)
-			.then ( 
-				function( data ) {
-					
-					data3 = data
-					
-					return  new dumyFuncResolve( 3 );
-
-				}
-			)
-			; 
+			); 
 			
 			setTimeout ( function () { 
 				
@@ -483,8 +463,7 @@ describe("Test la-promesa_js async. 2'then' and 2 'catch' one after the other =>
 	
 });
 
-
-describe("Test la-promesa_js async. 2'then' and 1 'catch' The 'throw error' in 'then' function  is been catching by 'catch' function", function( ) {	
+describe("Test la-promesa_js sync. 2'then' and 1 'catch' The 'throw error' in 'then' function  is been catching by 'catch' function", function( ) {	
 	
 	var data1, data2;
 	var error3;

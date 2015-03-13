@@ -438,3 +438,59 @@ describe("Test la-promesa_js async. 2'then' and 2 'catch' one after the other =>
 	
 });
 
+describe("Test la-promesa_js sync. 2'then' and 1 'catch' The 'throw error' in 'then' function  is been catching by 'catch' function", function( ) {	
+	
+	var data1, data2;
+	var error3;
+
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolve( 1 )
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+						
+						throw "ERROR dummy";
+									
+						return new dumyFuncResolve( 2 );
+
+					} 
+			)
+			.then(   
+					function ( data ) { 			
+
+						data2 = data;
+						
+						return new dumyFuncResolve( 3 );
+
+					} 
+			)
+			.catch(  
+					function ( error ) {
+
+						error3 = error; 										
+
+					} 
+			)
+			; 
+			
+			setTimeout ( function () { done(); }, 100);
+			
+	});
+	
+	
+	it( "Test", function( done ) {		
+		
+		expect( data1 ).toEqual( "resolve msg 1" );
+		expect( typeof data2 ).toEqual( "undefined" );
+		expect( error3 ).toEqual( "ERROR dummy" );
+		
+		done();
+
+	});
+	
+	
+});
+
+

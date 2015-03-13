@@ -36,6 +36,20 @@ module.exports = function(grunt) {
 				options: {
 					specs: 'test/spec/laPromesaSpec-mixsync.js'
 				}
+			},
+			
+			"la-promesa_async-prms": {
+				src: 'src/la-promesa.js',
+				options: {
+					specs: 'test/spec/laPromesaSpec-async-prms.js'
+				}
+			},
+			
+			"la-promesa_sync-prms": {
+				src: 'src/la-promesa.js',
+				options: {
+					specs: 'test/spec/laPromesaSpec-sync-prms.js'
+				}
 			}
 		}
 		
