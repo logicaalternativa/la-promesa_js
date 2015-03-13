@@ -1,22 +1,4 @@
 
-var dumyFuncResolve = function ( step ){
-	
-		var defer = laPrms.defer();
-
-		defer.resolve( "resolve msg " + step );
-
-		return defer.promise;	
-	};
-	
-var dumyFuncReject = function ( step ){
-	
-		var defer = laPrms.defer();
-		
-		defer.reject( "reject msg " + step );
-
-		return defer.promise;	
-	};
-
 var dumyFuncResolve = function ( step ) {
 	
 		var prmsFunc = function ( resolve, reject ) {

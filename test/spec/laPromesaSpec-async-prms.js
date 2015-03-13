@@ -12,7 +12,8 @@ var dumyFuncResolve = function ( step ) {
 				setTimeout( functionTimeOut, 	10 );
 		}		
 				
-		return laPrms.createPromise( prmsFunc );	
+		return laPrms.createPromise( prmsFunc );
+			
 	};
 	
 var dumyFuncReject = function ( step ){
@@ -29,6 +30,7 @@ var dumyFuncReject = function ( step ){
 		}		
 				
 		return laPrms.createPromise( prmsFunc );	
+		
 	};
 
 describe("Test la-promesa_js async-prms. 2 'then' function => resolve", function( ) {	

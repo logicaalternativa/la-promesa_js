@@ -135,6 +135,7 @@ var laPrms = (
 				} else if ( beanReject.flag ) {
 					
 					throw "The promise is already rejected";
+					
 				}
 				
 			}

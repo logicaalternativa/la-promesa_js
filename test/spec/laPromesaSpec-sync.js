@@ -5,7 +5,8 @@ var dumyFuncResolve = function ( step ){
 
 		defer.resolve( "resolve msg " + step );
 
-		return defer.promise;	
+		return defer.promise;
+		
 	};
 	
 var dumyFuncReject = function ( step ){
@@ -14,7 +15,8 @@ var dumyFuncReject = function ( step ){
 		
 		defer.reject( "reject msg " + step );
 
-		return defer.promise;	
+		return defer.promise;
+		
 	};
 
 describe("Test la-promesa_js async. 2 'then' function => resolve", function( ) {	
