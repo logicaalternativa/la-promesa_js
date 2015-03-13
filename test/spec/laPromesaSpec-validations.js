@@ -121,4 +121,122 @@ describe("Test la-promesa_js validations", function( ) {
 
 	});
 	
+	it( "Test It calls first 'resolve' and after 'reject' - defered", function( ) {	
+		
+		var error; 	
+		
+		var dumyFunc = function ( step ){
+		
+			var defer = laPrms.defer();
+			
+			defer.resolve( "resolve msg " + step );
+			defer.reject( "reject msg " + step );
+
+			return defer.promise;
+			
+		};
+		
+		try {
+			
+			dumyFunc() 
+			
+		} catch ( err ) {
+			
+			error = err;
+		}
+		
+		expect( "The promise is already resolved" ).toEqual( error );		
+
+	});
+	
+	it( "Test It calls first 'resolve' and after 'reject' - prms", function( ) {	
+		
+		var error; 	
+		
+		var dumyFunc = function ( step ){
+		
+			var prmsFunc = function ( resolve, reject ) {
+			
+				resolve( "resolve msg " + step );
+				reject( "reject msg " + step );
+				
+			}		
+					
+			return laPrms.createPromise( prmsFunc );	
+			
+		};
+		
+		try {
+			
+			dumyFunc() 
+			
+		} catch ( err ) {
+			
+			error = err;
+		}
+		
+		expect( "The promise is already resolved" ).toEqual( error );
+		
+
+	});
+	
+	it( "Test It calls first 'reject' and after 'resolved' - defered", function( ) {	
+		
+		var error; 	
+		
+		var dumyFunc = function ( step ){
+		
+			var defer = laPrms.defer();
+			
+			defer.reject( "reject msg " + step );
+			defer.resolve( "resolve msg " + step );
+
+			return defer.promise;
+			
+		};
+		
+		try {
+			
+			dumyFunc() 
+			
+		} catch ( err ) {
+			
+			error = err;
+		}
+		
+		expect( "The promise is already rejected" ).toEqual( error );		
+
+	});
+	
+	it( "Test It calls first 'reject' and after 'resolved' - prms", function( ) {	
+		
+		var error; 	
+		
+		var dumyFunc = function ( step ){
+		
+			var prmsFunc = function ( resolve, reject ) {
+			
+				reject( "reject msg " + step );
+				resolve( "resolve msg " + step );
+				
+			}		
+					
+			return laPrms.createPromise( prmsFunc );	
+			
+		};
+		
+		try {
+			
+			dumyFunc() 
+			
+		} catch ( err ) {
+			
+			error = err;
+		}
+		
+		expect( "The promise is already rejected" ).toEqual( error );
+		
+
+	});
+	
 });
