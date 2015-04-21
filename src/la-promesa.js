@@ -32,12 +32,6 @@ var laPrms = (
 		
 		var triggerNextPromise = function ( prms, aresolveFunc, arejectFunc ) {
 				
-			if ( ! isValidPromise( prms ) ) {
-				
-				throw "This object is not valid promise";
-				
-			} 			
-			
 			var futurPromise =  prms.then( aresolveFunc, arejectFunc );
 				
 			if ( ! isValidPromise( futurPromise ) ) {
@@ -142,11 +136,11 @@ var laPrms = (
 			
 			var then = function( aresolveFunc, arejectFunc ) {	
 				
-				if ( nextPromise ) {
+				if ( isValidPromise( nextPromise )  ) {
 					
 					nextPromise = triggerNextPromise( nextPromise, aresolveFunc, arejectFunc );
 					
-				} else {
+				} else if ( ! nextPromise ) {
 				
 					addBeanFunction( aresolveFunc, arejectFunc, bufferBeanFunct );
 					
@@ -162,17 +156,13 @@ var laPrms = (
 					
 				}
 				
-				if ( ! nextPromise ) {
-					
-					return returnPromise;
-					
-				} else if ( isValidPromise( nextPromise ) ) {
+				if ( isValidPromise( nextPromise ) ) {
 					
 					return nextPromise;
 					
 				} 
 				
-				return null;
+				return returnPromise;
 				
 			}	
 			

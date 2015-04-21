@@ -64,7 +64,7 @@ describe("Test la-promesa_js async-prms. 2 'then' function => resolve", function
 
 			); 
 			
-		setTimeout ( function () { done(); }, 100);
+		setTimeout ( function () { done(); }, 150);
 			
 	});
 	
@@ -83,6 +83,43 @@ describe("Test la-promesa_js async-prms. 2 'then' function => resolve", function
 	
 });
 
+describe("Test la-promesa_js async-prms. 1 'then' and catch function", function( ) {	
+	
+	var data1, error3;
+	
+   beforeEach( function( done ) {
+	 
+		var prom1 = dumyFuncResolve(1)
+			.then(   
+					function ( data ) { 			
+
+						data1 = data;
+						
+
+					} 
+			).catch ( 
+				function( error ) {
+
+					error3 = error;					
+					
+				}
+			); 
+			
+			setTimeout ( function () { done(); }, 100);
+			
+	});
+	
+	it( "Test", function( done ) {		
+		
+		expect( "resolve msg 1" ).toEqual( data1 );
+		expect( "undefined" ).toEqual( typeof error3 );
+		
+		done();
+
+	});
+	
+});
+
 describe("Test la-promesa_js async-prms. 2 'then' and catch function => reject last then", function( ) {	
 	
 	var data1, data2, error3;
@@ -90,15 +127,11 @@ describe("Test la-promesa_js async-prms. 2 'then' and catch function => reject l
 
    beforeEach( function( done ) {
 	 
-		var prom1 = dumyFuncResolve( 1 )
+		var prom1 = dumyFuncResolve(1)
 			.then(   
 					function ( data ) { 			
 
 						data1 = data;
-						
-						// Traza
-						console.log( "data1 - " + data1 );
-						// Fin de traza
 						date1 = ( new Date() ).getTime();
 									
 						return new  dumyFuncResolve( 2 ) 
@@ -109,10 +142,6 @@ describe("Test la-promesa_js async-prms. 2 'then' and catch function => reject l
 
 						data2 = data;
 									
-						// Traza
-						console.log( "data2 - " + data2 );
-						// Fin de traza
-						
 						return new  dumyFuncReject( 3 ) 
 
 					} 
@@ -303,8 +332,8 @@ describe("Test la-promesa_js async-prms. 3 'then' and catch function between", f
 
 describe("Test la-promesa_js async-prms. 3 'then' after reject => catch returns promise", function( ) {	
 	
-	var data1, data3;
-	var error2, error4;
+	var data1, data3, data4;
+	var error2, error5;
 
    beforeEach( function( done ) {
 	 
@@ -337,11 +366,17 @@ describe("Test la-promesa_js async-prms. 3 'then' after reject => catch returns 
 				
 								try {
 									
-									 prom1 = prom1.then( function () {  new dumyFuncResolve( 3 ) }  );
+									 prom1 = prom1
+													.then( 
+															function () { 																
+																data4 = 'Called';																
+																return new dumyFuncResolve( 3 );
+															}  
+														);
 									 
 								} catch( err ) {
 								
-									error4 = err;
+									error5 = err;
 									
 								}
 								done(); 
@@ -357,7 +392,8 @@ describe("Test la-promesa_js async-prms. 3 'then' after reject => catch returns 
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( data3 ).toEqual( "resolve msg 3" );
 		expect( data3 ).toEqual( "resolve msg 3" );
-		//~ expect( typeof error4 !== 'undefined' ).toEqual( true );
+		expect( typeof data4 === 'undefined' ).toEqual( true );
+		expect( typeof error5 === 'undefined' ).toEqual( true );
 		
 		done();
 
@@ -406,11 +442,17 @@ describe("Test la-promesa_js async-prms. 3 'then' after reject => catch returns 
 				
 								try {
 									
-									 prom1 = prom1.then( function () {  new dumyFuncResolve( 3 ) }  );
+									 prom1 = prom1
+													.then( 
+															function () { 																
+																data4 = 'Called';																
+																return new dumyFuncResolve( 3 );
+															}  
+														);
 									 
 								} catch( err ) {
 								
-									error4 = err;
+									error5 = err;
 									
 								}
 								done(); 
@@ -425,7 +467,8 @@ describe("Test la-promesa_js async-prms. 3 'then' after reject => catch returns 
 		expect( typeof data1 ).toEqual( "undefined" );
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( typeof  data3 ).toEqual( "undefined" );
-		expect( typeof error4 !== 'undefined' ).toEqual( true );
+		expect( typeof data4 === 'undefined' ).toEqual( true );
+		expect( typeof error5 === 'undefined' ).toEqual( true );
 		
 		done();
 
@@ -494,6 +537,7 @@ describe("Test la-promesa_js async-prms. 2'then' and 2 'catch' one after the oth
 	
 	
 });
+
 
 describe("Test la-promesa_js async-prms. 2'then' and 1 'catch' The 'throw error' in 'then' function  is been catching by 'catch' function", function( ) {	
 	

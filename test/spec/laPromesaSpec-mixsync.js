@@ -518,8 +518,8 @@ describe("Test la-promesa_js mix. 3 'then' and catch function between II", funct
 
 describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise I", function( ) {	
 	
-	var data1, data3;
-	var error2, error4;
+	var data1, data3, data4;
+	var error2, error5;
 
    beforeEach( function( done ) {
 	 
@@ -552,11 +552,17 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise
 				
 								try {
 									
-									 prom1 = prom1.then( function () {  new dumyFuncResolveSync( 3 ) }  );
+									 prom1 = prom1
+													.then( 
+															function () { 																
+																data4 = 'Called';																
+																return new dumyFuncResolve( 3 );
+															}  
+														);
 									 
 								} catch( err ) {
 								
-									error4 = err;
+									error5 = err;
 									
 								}
 								done(); 
@@ -572,7 +578,8 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( data3 ).toEqual( "resolve msg 3" );
 		expect( data3 ).toEqual( "resolve msg 3" );
-		expect( typeof error4 !== 'undefined' ).toEqual( true );
+		expect( typeof data5 === 'undefined' ).toEqual( true );
+		expect( typeof error4 === 'undefined' ).toEqual( true );
 		
 		done();
 
@@ -582,8 +589,8 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise
 
 describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise II", function( ) {	
 	
-	var data1, data3;
-	var error2, error4;
+	var data1, data3, data4;
+	var error2, error5;
 
    beforeEach( function( done ) {
 	 
@@ -616,11 +623,17 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise
 				
 								try {
 									
-									 prom1 = prom1.then( function () {  new dumyFuncResolveAsync( 3 ) }  );
+									prom1 = prom1
+													.then( 
+															function () { 																
+																data4 = 'Called';																
+																return new dumyFuncResolve( 3 );
+															}  
+														);
 									 
 								} catch( err ) {
 								
-									error4 = err;
+									error5 = err;
 									
 								}
 								done(); 
@@ -636,7 +649,8 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( data3 ).toEqual( "resolve msg 3" );
 		expect( data3 ).toEqual( "resolve msg 3" );
-		expect( typeof error4 !== 'undefined' ).toEqual( true );
+		expect( typeof data4 === 'undefined' ).toEqual( true );
+		expect( typeof error5 === 'undefined' ).toEqual( true );
 		
 		done();
 
@@ -645,11 +659,10 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns promise
 	
 });
 
-
 describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO promise I", function( ) {	
 	
-	var data1, data3;
-	var error2, error4;
+	var data1, data3, data4;
+	var error2, error5;
 
    beforeEach( function( done ) {
 	 
@@ -686,11 +699,17 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO prom
 				
 								try {
 									
-									 prom1 = prom1.then( function () {  new dumyFuncResolveSync( 3 ) }  );
+									prom1 = prom1
+													.then( 
+															function () { 																
+																data4 = 'Called';																
+																return new dumyFuncResolve( 3 );
+															}  
+														);
 									 
 								} catch( err ) {
 								
-									error4 = err;
+									error5 = err;
 									
 								}
 								done(); 
@@ -705,7 +724,8 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO prom
 		expect( typeof data1 ).toEqual( "undefined" );
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( typeof  data3 ).toEqual( "undefined" );
-		expect( typeof error4 !== 'undefined' ).toEqual( true );
+		expect( typeof data4 === 'undefined' ).toEqual( true );
+		expect( typeof error5 === 'undefined' ).toEqual( true );
 		
 		done();
 
@@ -715,8 +735,8 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO prom
 
 describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO promise II", function( ) {	
 	
-	var data1, data3;
-	var error2, error4;
+	var data1, data3, data4;
+	var error2, error5;
 
    beforeEach( function( done ) {
 	 
@@ -744,7 +764,13 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO prom
 				
 								try {
 									
-									 prom1 = prom1.then( function () {  new dumyFuncResolveAsync( 3 ) }  );
+									prom1 = prom1
+													.then( 
+															function () { 																
+																data4 = 'Called';																
+																return new dumyFuncResolve( 3 );
+															}  
+														);
 									 
 								} catch( err ) {
 								
@@ -762,7 +788,8 @@ describe("Test la-promesa_js mix. 3 'then' after reject => catch returns NO prom
 		expect( typeof data1 ).toEqual( "undefined" );
 		expect( error2 ).toEqual( "reject msg 1" );
 		expect( typeof  data3 ).toEqual( "undefined" );
-		expect( typeof error4 !== 'undefined' ).toEqual( true );
+		expect( typeof data4 === 'undefined' ).toEqual( true );
+		expect( typeof error5 === 'undefined' ).toEqual( true );
 		
 		done();
 
